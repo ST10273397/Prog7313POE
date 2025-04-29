@@ -3,7 +3,7 @@ package com.example.prog7313poe.ui.login
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.prog7313poe.Database.AppDatabase
+import com.example.prog7313poe.Database.users.AppDatabase
 import com.example.prog7313poe.data.LoginDataSource
 import com.example.prog7313poe.data.LoginRepository
 

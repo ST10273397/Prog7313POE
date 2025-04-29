@@ -8,13 +8,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.prog7313poe.Database.AppDatabase
-import android.content.Context
+import com.example.prog7313poe.Database.users.AppDatabase
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import com.example.prog7313poe.Database.UserDAO
-import com.example.prog7313poe.Database.UserData
+import com.example.prog7313poe.Database.users.UserDAO
+import com.example.prog7313poe.Database.users.UserData
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MyUserRegistrationActivity : AppCompatActivity() {
 
@@ -60,26 +61,38 @@ class MyUserRegistrationActivity : AppCompatActivity() {
 
     private fun btnConfirmClick() {
         lifecycleScope.launch {
-            val existingUser = userDAO.getUserByEmail(userEmail.text.toString())
-        if (existingUser != null) {
-            Toast.makeText(this@MyUserRegistrationActivity, "This User Already Exists!", Toast.LENGTH_SHORT).show()
-        }
-            if (!PasswordMatch()) {
-                Toast.makeText(this@MyUserRegistrationActivity, "Passwords Don't Match!", Toast.LENGTH_SHORT).show()
-            } else {
-                val newUser = UserData(
-                            email = userEmail.text.toString(),
-                            firstName = userFirstName.text.toString(),
-                            lastName = userLastName.text.toString(),
-                            password = userPassword.text.toString(),
-                        )
-                userDAO.insertUser(newUser)
-                    Toast.makeText(this@MyUserRegistrationActivity, "You have successfully registered!", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this@MyUserRegistrationActivity, MyHomeActivity::class.java)
-                startActivity(intent)
-                }
+            val emailText = userEmail.text.toString()
+            val existingUser = withContext(Dispatchers.IO) {
+                userDAO.getUserByEmail(emailText)
             }
+            if (existingUser != null) {
+                Toast.makeText(this@MyUserRegistrationActivity,
+                    "This user already exists!", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            if (!PasswordMatch()) {
+                Toast.makeText(this@MyUserRegistrationActivity,
+                    "Passwords don't match!", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            // Only reaches here if both checks pass
+            val newUser = UserData(
+                email     = emailText,
+                firstName = userFirstName.text.toString(),
+                lastName  = userLastName.text.toString(),
+                password  = userPassword.text.toString()
+            )
+            withContext(Dispatchers.IO) {
+                userDAO.insertUser(newUser)
+            }
+            Toast.makeText(this@MyUserRegistrationActivity,
+                "You have successfully registered!", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this@MyUserRegistrationActivity, MyHomeActivity::class.java))
+        }
     }
+
 
     private fun PasswordMatch(): Boolean {
         return userPassword.text.toString() == userConfirmPassword.text.toString()

@@ -1,7 +1,7 @@
 package com.example.prog7313poe.data
 
 import com.example.prog7313poe.data.model.LoggedInUser
-import com.example.prog7313poe.Database.UserDAO
+import com.example.prog7313poe.Database.users.UserDAO
 import java.io.IOException
 
 /**

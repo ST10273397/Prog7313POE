@@ -1,6 +1,6 @@
 package com.example.prog7313poe.data.model
 
-import com.example.prog7313poe.Database.UserData
+import com.example.prog7313poe.Database.users.UserData
 
 /**
  * Data class that captures logged-in user information,

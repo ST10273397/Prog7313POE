@@ -1,4 +1,4 @@
-package com.example.prog7313poe.Database
+package com.example.prog7313poe.Database.users
 
 import androidx.room.Dao
 import androidx.room.Delete
